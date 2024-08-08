@@ -9,6 +9,8 @@ We are exploring
   3. Fast detection of changed geometry
   4. Performing processing asynchronously via Revit idle events.   
 
+For some high-level thoughts on performance optimization in software see https://github.com/ara3d/revit-fast-exporter/blob/main/notes-on-performance.md.
+
 ## C# Scripting in Revit with Bowerbird 
 
 Currently the early coding experiments are being done using the [Bowerbird plug-in](https://github.com/ara3d/bowerbird).
@@ -17,7 +19,10 @@ Bowerbird scans a directory for code, and recompiles and reloads it whenever a f
 
 The current code experiments can be found at https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/SampleRevitCommands.cs.
 
-# Geometry Abstract Syntax Tree (GAST)
+---
+# Fast Geometry Grouping
+
+## Geometry Abstract Syntax Tree (GAST)
 
 A geometry abstract syntax tree (GAST) is a novel method of succinctly expressing BIM or CAD geometric data that can be used for fast detection of similar geometry, and separation of different geometry.
 
@@ -34,3 +39,23 @@ The 3D representation of BIM elements stored within the native structures of Rev
 Comping a GAST and storing it as a string is a much faster operation than performing tessellation, which is the commonly used method for comparing geometric similarity.
 
 Some early code for generating a GAST can be found at: https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/GeometryAbstractSyntaxTree.cs.
+
+---
+# Aysnchronous Processing in Revit
+
+For some clarification on terminology see: https://github.com/ara3d/revit-fast-exporter/blob/main/notes-on-async.md.
+
+Access to the Revit API can only be done through the main thread.
+
+To enable code to appear non-blocking to a user we can use the `UIApplication.OnIdling` event and a queue to store work in some quickly consumed tasks.
+An open question is whether we can perform a substantial enough amount of work in a short enough period of time, to still have a positive user experience 
+and to not cause the application to appear to lag or stutter. 
+
+---
+# Filtering of Data before Export 
+
+To improve performance of Revit export, a technique we can apply is to filter data to assure we only include specific kinds of data the user cares about, 
+or a filter to exclude specific kinds of data we definitely don't care about.
+
+This can increase the performance of export, as well as the performance of change detection.
+
