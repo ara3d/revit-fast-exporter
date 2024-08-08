@@ -20,6 +20,19 @@ Bowerbird scans a directory for code, and recompiles and reloads it whenever a f
 The current code experiments can be found at https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/SampleRevitCommands.cs.
 
 ---
+# Geometric Change Detection
+
+Detecting changes in geometric data is a hard problem to do rigorously. Hashing techniques reduce a high-dimensional data set to a lower-dimensionality data set,
+and invariably different objects can result in the same hash code. When two objects have the same hash-code a detailed comparison has to be done on the geometry. 
+
+We do not recommend computing a mesh, as this is an expensive operation, so we propose using the geometry definitions.  
+
+## Note on GetHashCode()
+
+Despite what it may appear the `GetHashCode` function of various Revit elements (including `GeometryObject`) does not actually create a hash based on the value of the geometry, but rather of 
+the address of a native pointer. This means that `GetHashCode` is definitely not going to be consistent between Revit sessions, and maybe not even between the same geometry object. 
+
+---
 # Fast Geometry Grouping
 
 ## Geometry Abstract Syntax Tree (GAST)
@@ -40,6 +53,12 @@ Comping a GAST and storing it as a string is a much faster operation than perfor
 
 Some early code for generating a GAST can be found at: https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/GeometryAbstractSyntaxTree.cs.
 
+## Open Questions
+
+* How quickly can a GAST be computed even in extremely degenerate cases?
+* How reliable is it that GASTs will be different for different objects?
+* How similar are distance metrics applied to GASTs are to distance metrics applied to the resulting meshes?   
+
 ---
 # Aysnchronous Processing in Revit
 
@@ -58,4 +77,7 @@ To improve performance of Revit export, a technique we can apply is to filter da
 or a filter to exclude specific kinds of data we definitely don't care about.
 
 This can increase the performance of export, as well as the performance of change detection.
+
+No code has been written to do this yet. It is not a hard problem computationally, but it requires significant consideration to be given 
+to the design of the workflow and UI. 
 
