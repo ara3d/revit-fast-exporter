@@ -70,6 +70,8 @@ To enable code to appear non-blocking to a user we can use the `UIApplication.On
 An open question is whether we can perform a substantial enough amount of work in a short enough period of time, to still have a positive user experience 
 and to not cause the application to appear to lag or stutter. 
 
+Some code examples are being used to experiment with the OnIdling event: https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/SampleRevitCommands.cs
+
 ---
 # Filtering of Data before Export 
 
