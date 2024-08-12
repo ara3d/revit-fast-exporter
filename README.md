@@ -116,5 +116,39 @@ to the design of the workflow and UI.
     * Tessellating mesh
     * Extra properties
     
+First result.
+
+The following took about 15 minutes on a medium-large hospital model, just to extract 150,000 names, and it was incredibly slow to respond. 
+
+```
+    private void VERY_SLOW_DONT_DO_THIS_Application_Idling(object sender, Autodesk.Revit.UI.Events.IdlingEventArgs e)
+    {
+        if (Completed) return;
+        IdleTime.Start();
+        var uiApp = sender as UIApplication;
+        if (uiApp == null) return;
+        if (Ids.Count == 0)
+        {
+            Log($"Creating {WorkOutput.Count} items");
+            var n1 = IdleTime.ElapsedMilliseconds / 1000f;
+            var n2 = WallTime.ElapsedMilliseconds / 1000f;
+            Log($"{n1:##.00} seconds elapsed in CPU-time");
+            Log($"{n2:##.00} seconds elapsed in real-time");
+            Completed = true;
+            return;
+        }
+
+        var id = Ids.Dequeue();
+        var el = Doc.GetElement(new ElementId(id));
+        WorkOutput.Add(el.Name);
+        IdleTime.Stop();
+        e.SetRaiseWithoutDelay();
+    }
+```
+
+The hypothesis is that the slow performance might have been due to doing too little work, so many calls to the Application idling event might have been a problem. 
+
+The other hypothesis is that using `SetRaiseWithoutDelay` might lead to extremely sluggish responsiveness. 
+
 
 
