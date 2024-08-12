@@ -101,4 +101,20 @@ This can increase the performance of export, as well as the performance of chang
 No code has been written to do this yet. It is not a hard problem computationally, but it requires significant consideration to be given 
 to the design of the workflow and UI. 
 
+---
+# Proposed Experiment
+
+1. Perform a long running task that requires the Revit API but that can be broken up into a large number of objects only on the `Idling` event.
+  * Observe the responsiveness.
+  * See if it breaks when things change, or the user does things
+  * Measure how much wall-clock time passes compared to actual processing time
+  * Idea for data set
+    * Every element selected
+    * Every element in view / document
+  * Ideas for tasks:
+    * Compute geometry syntax trees
+    * Tessellating mesh
+    * Extra properties
+    
+
 
