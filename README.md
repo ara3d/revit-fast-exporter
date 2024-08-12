@@ -102,53 +102,8 @@ No code has been written to do this yet. It is not a hard problem computationall
 to the design of the workflow and UI. 
 
 ---
-# Proposed Experiment
+# Experiment: Non-Blocking Revit Background Exporter
 
-1. Perform a long running task that requires the Revit API but that can be broken up into a large number of objects only on the `Idling` event.
-  * Observe the responsiveness.
-  * See if it breaks when things change, or the user does things
-  * Measure how much wall-clock time passes compared to actual processing time
-  * Idea for data set
-    * Every element selected
-    * Every element in view / document
-  * Ideas for tasks:
-    * Compute geometry syntax trees
-    * Tessellating mesh
-    * Extra properties
-    
-First result.
+Find code at: https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/SampleRevitCommands.cs
 
-The following took about 15 minutes on a medium-large hospital model, just to extract 150,000 names, and it was incredibly slow to respond. 
-
-```
-    private void VERY_SLOW_DONT_DO_THIS_Application_Idling(object sender, Autodesk.Revit.UI.Events.IdlingEventArgs e)
-    {
-        if (Completed) return;
-        IdleTime.Start();
-        var uiApp = sender as UIApplication;
-        if (uiApp == null) return;
-        if (Ids.Count == 0)
-        {
-            Log($"Creating {WorkOutput.Count} items");
-            var n1 = IdleTime.ElapsedMilliseconds / 1000f;
-            var n2 = WallTime.ElapsedMilliseconds / 1000f;
-            Log($"{n1:##.00} seconds elapsed in CPU-time");
-            Log($"{n2:##.00} seconds elapsed in real-time");
-            Completed = true;
-            return;
-        }
-
-        var id = Ids.Dequeue();
-        var el = Doc.GetElement(new ElementId(id));
-        WorkOutput.Add(el.Name);
-        IdleTime.Stop();
-        e.SetRaiseWithoutDelay();
-    }
-```
-
-The hypothesis is that the slow performance might have been due to doing too little work, so many calls to the Application idling event might have been a problem. 
-
-The other hypothesis is that using `SetRaiseWithoutDelay` might lead to extremely sluggish responsiveness. 
-
-
-
+https://github.com/user-attachments/assets/02dc86df-7393-4152-b43d-0d3b9961cd20
