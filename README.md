@@ -104,6 +104,10 @@ to the design of the workflow and UI.
 ---
 # Experiment: Non-Blocking Revit Background Exporter
 
+The goal was to perform a non-trivial task on a set of objects during `Idling` events. In this experiment I extract geometry information (but without tessellating meshes)
+from every element in the scene. The total running time of the algorithm 2.8 seconds but is amortized over a total of 40 seconds. We demonstrate that we can still navigate,
+select, and even add or remove objects in the Revit scene.     
+
 Find code at: https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/SampleRevitCommands.cs
 
 https://github.com/user-attachments/assets/02dc86df-7393-4152-b43d-0d3b9961cd20
