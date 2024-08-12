@@ -73,6 +73,24 @@ and to not cause the application to appear to lag or stutter.
 Some code examples are being used to experiment with the OnIdling event: https://github.com/ara3d/bowerbird/blob/main/Ara3D.Bowerbird.RevitSamples/SampleRevitCommands.cs
 
 ---
+# Revit.Async and the Revit Context 
+
+[Revit.Async](https://github.com/KennanChan/Revit.Async) is a confusingly named tool to simplify the programming pattern of communicating with the Revit API outside of the so-called "Revit Context".
+The Revit context is a loosely defined terms, that specifies if Revit is in the correct state to receive API requests. 
+
+For example, if you are on a background thread, or responding to a UI event in a modeless WPF Window you are probably not in a valid Revit context. 
+If you are correctly responding to a Revit ExternalEvent or the Revit UIApplication.Idling event then you are in a valid Revit context.   
+
+To determine if you are in a [valid Revit context see this link](https://forums.autodesk.com/t5/revit-api-forum/how-to-know-if-revit-api-is-in-context/td-p/12574320).  
+
+Revit.Async allows the user to `await` on an `async` task which is executed within a valid Revit context. 
+
+The Speckle team uses code derived from the Revit.Async package. 
+
+* See [code here](https://github.com/specklesystems/speckle-sharp/blob/main/ConnectorRevit/RevitSharedResources/Models/APIContext.cs).
+* See [discussion of PR here](https://github.com/specklesystems/speckle-sharp/pull/2825)
+
+---
 # Filtering of Data before Export 
 
 To improve performance of Revit export, a technique we can apply is to filter data to assure we only include specific kinds of data the user cares about, 
@@ -82,4 +100,5 @@ This can increase the performance of export, as well as the performance of chang
 
 No code has been written to do this yet. It is not a hard problem computationally, but it requires significant consideration to be given 
 to the design of the workflow and UI. 
+
 
